@@ -1,32 +1,4 @@
 variable "endpoints" {
-  default = [
-    {
-      resource_id = "/subscriptions/storageAccounts/stexample"
-      subresource = {
-        blob = {
-          endpoint_name          = "pe-stexample-blob"
-          network_interface_name = "pe-nic-stexample-blob"
-          private_dns_zone_ids   = ["/subscriptions/privateDnsZones/privatelink.blob.core.windows.net"]
-        }
-        dfs = {
-          endpoint_name          = "pe-stexample-dfs"
-          network_interface_name = "pe-nic-stexample-dfs"
-          private_dns_zone_ids   = ["/subscriptions/privateDnsZones/privatelink.dfs.core.windows.net"]
-        }
-      }
-    },
-    {
-      resource_id = "/subscriptions/storageAccounts/stexample2"
-      subresource = {
-        queue = {
-          private_dns_zone_ids = ["/subscriptions/privateDnsZones/privatelink.queue.core.windows.net"]
-        }
-        table = {
-          private_dns_zone_ids = ["/subscriptions/privateDnsZones/privatelink.table.core.windows.net"]
-        }
-      }
-    }
-  ]
   description = <<-EOT
   A list of objects used to configure one or more private endpoints for one or more resources, in the format:
   ```
