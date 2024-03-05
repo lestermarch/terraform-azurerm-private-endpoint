@@ -37,6 +37,12 @@ variable "location" {
   type        = string
 }
 
+variable "log_analytics_workspace_id" {
+  default     = null
+  description = "The ID of a log analytics workspace to forward network interface metrics to."
+  type        = string
+}
+
 variable "resource_group_name" {
   description = "The name of the resource group into which resources will be deployed."
   type        = string

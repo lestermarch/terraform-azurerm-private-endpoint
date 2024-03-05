@@ -30,4 +30,10 @@ locals {
       }
     ]
   ])
+
+  # Map of private endpoint network interface names to IDs
+  network_interface_ids = var.log_analytics_workspace_id != null ? {
+    for endpoint, config in azurerm_private_endpoint.main :
+    config.network_interface[0].name => config.network_interface[0].id
+  } : {}
 }
