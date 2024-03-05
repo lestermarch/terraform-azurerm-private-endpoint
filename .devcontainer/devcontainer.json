@@ -1,0 +1,32 @@
+{
+  "name": "Terraform",
+  "build": {
+      "dockerfile": "Dockerfile",
+      "context": "."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "pkief.material-icon-theme",
+        "hashicorp.terraform",
+        "hashicorp.hcl",
+        "streetsidesoftware.code-spell-checker",
+        "cschleiden.vscode-github-actions",
+        "davidanson.vscode-markdownlint"
+      ],
+      "settings": {
+        "editor.tabSize": 2,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.fontFamily": "CascadiaCode",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
+        "workbench.iconTheme": "material-icon-theme"
+      }
+    }
+  },
+  "postCreateCommand": "pre-commit install",
+  "features": {}
+}
