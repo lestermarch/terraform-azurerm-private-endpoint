@@ -1,10 +1,11 @@
 variable "endpoints" {
   description = <<-EOT
   A list of objects used to configure one or more private endpoints for one or more resources, in the format:
-  ```
+  ```hcl
   [
     {
-      resource_id = "/subscriptions/storageAccounts/stexample"
+      resource_id  = "/subscriptions/storageAccounts/stexample"
+      auto_approve = true
       subresource = {
         blob = {
           endpoint_name          = "pe-stexample-blob"
@@ -20,10 +21,13 @@ variable "endpoints" {
     }
   ]
   ```
-  Endpoint and interface names will be automatically generated if not provided.
+  Notes:
+  - Setting `auto_approve` to `true` requires that the deployment prinicpal has the appropriate RBAC role assigned on the target `resource_id`.
+  - Endpoint and network interface names will be automatically generated unless `endpoint_name` or `network_interface_name` are specified.
   EOT
   type = list(object({
-    resource_id = string
+    resource_id  = string
+    auto_approve = optional(bool)
     subresource = map(object({
       endpoint_name          = optional(string)
       network_interface_name = optional(string)

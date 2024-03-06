@@ -1,5 +1,5 @@
 # Azure Private Endpoints
-This module allows for the provisioning of multiple private endpoints for multiple Azure resources. In effect, it allows the consumer to enable private networking for their solution in a single module call, rather than having to define many `azurerm_private_endpoint` resources. If a Log Analytics Workspace is provided, network interface metrics will be enabled so ensure compliance with control are met for common compliance initiatives such as ISO27001.
+This module allows for the provisioning of multiple private endpoints for multiple Azure resources. In effect, it allows the consumer to enable private networking for their solution in a single module call, rather than having to define many `azurerm_private_endpoint` resources. If a Log Analytics Workspace is provided then network interface metrics will be enabled so as to ensure controls are met for common compliance initiatives such as ISO27001.
 
 ## Examples
 
@@ -28,7 +28,7 @@ module {
 }
 ```
 
-2. Override endpoint and network interface names:
+2. Auto-approve connection requests, and override endpoint and network interface names:
 
 ```hcl
 module {
@@ -40,7 +40,8 @@ module {
   subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
   endpoints = [
     {
-      resource_id = "/subscriptions/.../storageAccounts/stexample"
+      resource_id  = "/subscriptions/.../storageAccounts/stexample"
+      auto-approve = true
       subresource = {
         blob = {
           endpoint_name          = "stexample-blob-pe"
@@ -160,7 +161,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_endpoints"></a> [endpoints](#input\_endpoints) | A list of objects used to configure one or more private endpoints for one or more resources, in the format:<pre>[<br>  {<br>    resource_id = "/subscriptions/storageAccounts/stexample"<br>    subresource = {<br>      blob = {<br>        endpoint_name          = "pe-stexample-blob"<br>        network_interface_name = "pe-nic-stexample-blob"<br>        private_dns_zone_ids   = ["/subscriptions/.../privateDnsZones/privatelink.blob.core.windows.net"]<br>      }<br>      dfs = {<br>        endpoint_name          = "pe-stexample-dfs"<br>        network_interface_name = "pe-nic-stexample-dfs"<br>        private_dns_zone_ids   = ["/subscriptions/.../privateDnsZones/privatelink.dfs.core.windows.net"]<br>      }<br>    }<br>  }<br>]</pre>Endpoint and interface names will be automatically generated if not provided. | <pre>list(object({<br>    resource_id = string<br>    subresource = map(object({<br>      endpoint_name          = optional(string)<br>      network_interface_name = optional(string)<br>      private_dns_zone_ids   = list(string)<br>    }))<br>  }))</pre> | n/a | yes |
+| <a name="input_endpoints"></a> [endpoints](#input\_endpoints) | A list of objects used to configure one or more private endpoints for one or more resources, in the format:<pre>hcl<br>[<br>  {<br>    resource_id  = "/subscriptions/storageAccounts/stexample"<br>    auto_approve = true<br>    subresource = {<br>      blob = {<br>        endpoint_name          = "pe-stexample-blob"<br>        network_interface_name = "pe-nic-stexample-blob"<br>        private_dns_zone_ids   = ["/subscriptions/.../privateDnsZones/privatelink.blob.core.windows.net"]<br>      }<br>      dfs = {<br>        endpoint_name          = "pe-stexample-dfs"<br>        network_interface_name = "pe-nic-stexample-dfs"<br>        private_dns_zone_ids   = ["/subscriptions/.../privateDnsZones/privatelink.dfs.core.windows.net"]<br>      }<br>    }<br>  }<br>]</pre>Notes:<br>- Setting `auto_approve` to `true` requires that the deployment prinicpal has the appropriate RBAC role assigned on the target `resource_id`.<br>- Endpoint and network interface names will be automatically generated unless `endpoint_name` or `network_interface_name` are specified. | <pre>list(object({<br>    resource_id  = string<br>    auto_approve = optional(bool)<br>    subresource = map(object({<br>      endpoint_name          = optional(string)<br>      network_interface_name = optional(string)<br>      private_dns_zone_ids   = list(string)<br>    }))<br>  }))</pre> | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The primary region into which resources will be deployed. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group into which resources will be deployed. | `string` | n/a | yes |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | The ID of the virtual network subnet in which private endpoints will be provisioned. | `string` | n/a | yes |
