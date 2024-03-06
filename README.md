@@ -1,5 +1,135 @@
-# Terraform Module Template
-Terraform module template with tooling configuration and devcontainer definition.
+# Azure Private Endpoints
+This module allows for the provisioning of multiple private endpoints for multiple Azure resources. In effect, it allows the consumer to enable private networking for their solution in a single module call, rather than having to define many `azurerm_private_endpoint` resources. If a Log Analytics Workspace is provided, network interface metrics will be enabled so ensure compliance with control are met for common compliance initiatives such as ISO27001.
+
+## Examples
+
+1. Single resource, single endpoint, required variables:
+
+```hcl
+module {
+  source  = "lestermarch/private-endpoint/azurerm"
+  version = "1.0.0"
+
+  location            = "uksouth"
+  resource_group_name = "rg-example"
+  subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
+  endpoints = [
+    {
+      resource_id = "/subscriptions/.../storageAccounts/stexample"
+      subresource = {
+        blob = {
+          private_dns_zone_ids = [
+            "/subscriptions/.../privateDnsZones/privatelink.blob.core.windows.net"
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+2. Override endpoint and network interface names:
+
+```hcl
+module {
+  source  = "lestermarch/private-endpoint/azurerm"
+  version = "1.0.0"
+
+  location            = "uksouth"
+  resource_group_name = "rg-example"
+  subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
+  endpoints = [
+    {
+      resource_id = "/subscriptions/.../storageAccounts/stexample"
+      subresource = {
+        blob = {
+          endpoint_name          = "stexample-blob-pe"
+          network_interface_name = "stexample-blob-pe-nic"
+          private_dns_zone_ids   = [
+            "/subscriptions/.../privateDnsZones/privatelink.blob.core.windows.net"
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+3. Multiple resources, multiple endpoints, required variables:
+
+```hcl
+module {
+  source  = "lestermarch/private-endpoint/azurerm"
+  version = "1.0.0"
+
+  location            = "uksouth"
+  resource_group_name = "rg-example"
+  subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
+  endpoints = [
+    {
+      # Storage account with blob and file private endpoints
+      resource_id = "/subscriptions/.../storageAccounts/stexample"
+      subresource = {
+        blob = {
+          private_dns_zone_ids = [
+            "/subscriptions/.../privateDnsZones/privatelink.blob.core.windows.net"
+          ]
+        }
+        file = {
+          private_dns_zone_ids = [
+            "/subscriptions/.../privateDnsZones/privatelink.file.core.windows.net"
+          ]
+        }
+      }
+    },
+    {
+      # Key vault with vault private endpoint
+      resource_id = "/subscriptions/.../storageAccounts/kv-example"
+      subresource = {
+        vault = {
+          private_dns_zone_ids = [
+            "/subscriptions/.../privateDnsZones/privatelink.vaultcore.azure.net"
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+4. Private endpoint configuration from YAML (or JSON):
+
+```yaml
+- resource_id: "/subscriptions/.../storageAccounts/stexample"
+  subresource:
+    blob:
+      private_dns_zone_ids:
+        - "/subscriptions/.../privateDnsZones/privatelink.blob.core.windows.net"
+    file:
+      private_dns_zone_ids:
+        - "/subscriptions/.../privateDnsZones/privatelink.file.core.windows.net"
+
+- resource_id: "/subscriptions/.../storageAccounts/kv-example"
+  subresource:
+    vault:
+      private_dns_zone_ids:
+        - "/subscriptions/.../privateDnsZones/privatelink.vaultcore.azure.net"
+```
+
+```hcl
+module {
+  source  = "lestermarch/private-endpoint/azurerm"
+  version = "1.0.0"
+
+  location            = "uksouth"
+  resource_group_name = "rg-example"
+  subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
+  endpoints           = yamldecode(file("${path.module}/config/private-endpoints.yaml"))
+
+  # For JSON:
+  # endpoints = jsondecode(file("${path.module}/config/private-endpoints.json"))
+}
+```
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
