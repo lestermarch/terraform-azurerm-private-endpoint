@@ -31,6 +31,12 @@ locals {
     ]
   ])
 
+  # Map of private endpoint names to their configuration
+  endpoints_iterable = {
+    for endpoint in local.endpoints :
+    endpoint.endpoint_name => endpoint
+  }
+
   # Map of private endpoint network interface names to IDs
   network_interface_ids = var.log_analytics_workspace_id != null ? {
     for endpoint, config in azurerm_private_endpoint.main :

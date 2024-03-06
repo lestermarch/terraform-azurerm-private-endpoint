@@ -1,5 +1,5 @@
 resource "azurerm_private_endpoint" "main" {
-  for_each = tomap(local.endpoints)
+  for_each = local.endpoints_iterable
 
   name                = each.value.endpoint_name
   location            = var.location
@@ -11,7 +11,7 @@ resource "azurerm_private_endpoint" "main" {
   private_service_connection {
     name                           = each.value.endpoint_name
     private_connection_resource_id = each.value.resource_id
-    subresource_names              = each.value.subresource
+    subresource_names              = [each.value.subresource]
     is_manual_connection           = false
   }
 
