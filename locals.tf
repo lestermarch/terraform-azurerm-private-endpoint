@@ -3,7 +3,7 @@ locals {
   endpoints = flatten([
     for resource in var.endpoints : [
       for subresource, endpoint in resource.subresource : {
-        auto_approve = try(resource.auto_approve, false)
+        auto_approve = coalesce(resource.auto_approve, false)
         endpoint_name = coalesce(
           endpoint.endpoint_name,
           join("-",
@@ -26,7 +26,7 @@ locals {
           )
         )
         private_dns_zone_ids = endpoint.private_dns_zone_ids
-        request_message      = try(resource.auto_approve, false) ? null : "Pending request from ${data.azurerm_client_config.context.client_id}"
+        request_message      = coalesce(resource.auto_approve, false) ? null : "Pending request from Terraform"
         resource_id          = resource.resource_id
         subresource          = subresource
       }
