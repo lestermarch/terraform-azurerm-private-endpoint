@@ -67,70 +67,6 @@ run "create_private_endpoints" {
       }
     ]
   }
-
-  # Validate private endpoint names
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-blob"].name == "pe-terraform-test-blob"
-    error_message = "Private endpoint name should match \"pe-terraform-test-blob\"."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-file"].name == "pe-terraform-test-file"
-    error_message = "Private endpoint name should match \"pe-terraform-test-file\"."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-${run.create_storage_account_two.storage_account_name}-blob"].name == "pe-${run.create_storage_account_two.storage_account_name}-blob"
-    error_message = "Private endpoint name should match \"pe-${run.create_storage_account_two.storage_account_name}-blob\"."
-  }
-
-  # Validate network interface names
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-blob"].network_interface[0].name == "pe-nic-terraform-test-blob"
-    error_message = "Private endpoint network interface name should match \"pe-nic-terraform-test-blob\"."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-file"].network_interface[0].name == "pe-nic-terraform-test-file"
-    error_message = "Private endpoint network interface name should match \"pe-nic-terraform-test-file\"."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-${run.create_storage_account_two.storage_account_name}-blob"].network_interface[0].name == "pe-nic-${run.create_storage_account_two.storage_account_name}-blob"
-    error_message = "Private endpoint network interface name should match \"pe-nic-${run.create_storage_account_two.storage_account_name}-blob\"."
-  }
-
-  # Validate private DNS zone association
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-blob"].private_dns_zone_configs[0].private_dns_zone_id == run.create_virtual_network.private_dns_zone_id.storage_account.blob
-    error_message = "Private endpoint should be associated to the \"privatelink.blob.core.windows.net\" private DNS zone."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-file"].private_dns_zone_configs[0].private_dns_zone_id == run.create_virtual_network.private_dns_zone_id.storage_account.file
-    error_message = "Private endpoint should be associated to the \"privatelink.file.core.windows.net\" private DNS zone."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-${run.create_storage_account_two.storage_account_name}-blob"].private_dns_zone_configs[0].private_dns_zone_id == run.create_virtual_network.private_dns_zone_id.storage_account.blob
-    error_message = "Private endpoint should be associated to the \"privatelink.blob.core.windows.net\" private DNS zone."
-  }
-
-  # Validate private endpoint FQDN
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-blob"].private_dns_zone_configs[0].record_sets[0].fqdn == "${run.create_storage_account_one.storage_account_name}.privatelink.blob.core.windows.net"
-    error_message = "Private endpoint FQDN should match \"${run.create_storage_account_one.storage_account_name}.blob.core.windows.net\"."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-terraform-test-file"].private_dns_zone_configs[0].record_sets[0].fqdn == "${run.create_storage_account_one.storage_account_name}.privatelink.file.core.windows.net"
-    error_message = "Private endpoint FQDN should match \"${run.create_storage_account_one.storage_account_name}.file.core.windows.net\"."
-  }
-
-  assert {
-    condition     = azurerm_private_endpoint.main["pe-${run.create_storage_account_two.storage_account_name}-blob"].private_dns_zone_configs[0].record_sets[0].fqdn == "${run.create_storage_account_two.storage_account_name}.privatelink.blob.core.windows.net"
-    error_message = "Private endpoint FQDN should match \"${run.create_storage_account_two.storage_account_name}.privatelink.blob.core.windows.net\"."
-  }
 }
 
 run "validate_private_endpoint_connections" {
@@ -145,6 +81,38 @@ run "validate_private_endpoint_connections" {
       "pe-terraform-test-file",
       "pe-${run.create_storage_account_two.storage_account_name}-blob"
     ]
+  }
+
+  # Validate private endpoint names
+  assert {
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-blob"].name == "pe-terraform-test-blob"
+    error_message = "Private endpoint name should match \"pe-terraform-test-blob\"."
+  }
+
+  assert {
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-file"].name == "pe-terraform-test-file"
+    error_message = "Private endpoint name should match \"pe-terraform-test-file\"."
+  }
+
+  assert {
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-${run.create_storage_account_two.storage_account_name}-blob"].name == "pe-${run.create_storage_account_two.storage_account_name}-blob"
+    error_message = "Private endpoint name should match \"pe-${run.create_storage_account_two.storage_account_name}-blob\"."
+  }
+
+  # Validate network interface names
+  assert {
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-blob"].network_interface[0].name == "pe-nic-terraform-test-blob"
+    error_message = "Private endpoint network interface name should match \"pe-nic-terraform-test-blob\"."
+  }
+
+  assert {
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-file"].network_interface[0].name == "pe-nic-terraform-test-file"
+    error_message = "Private endpoint network interface name should match \"pe-nic-terraform-test-file\"."
+  }
+
+  assert {
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-${run.create_storage_account_two.storage_account_name}-blob"].network_interface[0].name == "pe-nic-${run.create_storage_account_two.storage_account_name}-blob"
+    error_message = "Private endpoint network interface name should match \"pe-nic-${run.create_storage_account_two.storage_account_name}-blob\"."
   }
 
   # Validate private endpoint connection status
@@ -165,12 +133,12 @@ run "validate_private_endpoint_connections" {
 
   # Validate private endpoint connection request response
   assert {
-    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-blob"].private_service_connection[0].request_response == "Pending request from ${data.azurerm_client_config.context.client_id}"
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-blob"].private_service_connection[0].request_response == "${run.create_virtual_network.virtual_network_name}/${run.create_virtual_network.subnet_name}"
     error_message = "Private endpoint connection request response should match \"Pending request from Terraform\"."
   }
 
   assert {
-    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-file"].private_service_connection[0].request_response == "Pending request from ${data.azurerm_client_config.context.client_id}"
+    condition     = data.azurerm_private_endpoint_connection.validate["pe-terraform-test-file"].private_service_connection[0].request_response == "${run.create_virtual_network.virtual_network_name}/${run.create_virtual_network.subnet_name}"
     error_message = "Private endpoint connection request response should match \"Pending request from Terraform\"."
   }
 

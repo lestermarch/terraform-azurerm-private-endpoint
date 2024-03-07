@@ -26,9 +26,18 @@ locals {
           )
         )
         private_dns_zone_ids = endpoint.private_dns_zone_ids
-        request_message      = coalesce(resource.auto_approve, false) ? null : "Pending request from Terraform"
-        resource_id          = resource.resource_id
-        subresource          = subresource
+        request_message = (
+          coalesce(resource.auto_approve, false) ?
+          null :
+          join("/",
+            [
+              element(split("/", var.subnet_id), length(split("/", var.subnet_id)) - 3), # VNet name
+              element(split("/", var.subnet_id), length(split("/", var.subnet_id)) - 1)  # Subnet name
+            ]
+          )
+        )
+        resource_id = resource.resource_id
+        subresource = subresource
       }
     ]
   ])
