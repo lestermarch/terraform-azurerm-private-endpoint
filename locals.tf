@@ -3,6 +3,7 @@ locals {
   endpoints = flatten([
     for resource in var.endpoints : [
       for subresource, endpoint in resource.subresource : {
+        auto_approve = coalesce(resource.auto_approve, false)
         endpoint_name = coalesce(
           endpoint.endpoint_name,
           join("-",
@@ -25,8 +26,18 @@ locals {
           )
         )
         private_dns_zone_ids = endpoint.private_dns_zone_ids
-        resource_id          = resource.resource_id
-        subresource          = subresource
+        request_message = (
+          coalesce(resource.auto_approve, false) ?
+          null :
+          join("/",
+            [
+              element(split("/", var.subnet_id), length(split("/", var.subnet_id)) - 3), # VNet name
+              element(split("/", var.subnet_id), length(split("/", var.subnet_id)) - 1)  # Subnet name
+            ]
+          )
+        )
+        resource_id = resource.resource_id
+        subresource = subresource
       }
     ]
   ])

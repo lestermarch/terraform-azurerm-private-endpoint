@@ -17,3 +17,13 @@ output "subnet_id" {
   description = "The ID of the private endpoint subnet."
   value       = azurerm_subnet.terraform_test.id
 }
+
+output "subnet_name" {
+  description = "The name of the private endpoint subnet."
+  value       = azurerm_subnet.terraform_test.name
+}
+
+output "virtual_network_name" {
+  description = "The name of the virtual network."
+  value       = azurerm_virtual_network.terraform_test.name
+}

@@ -12,7 +12,8 @@ resource "azurerm_private_endpoint" "main" {
     name                           = each.value.endpoint_name
     private_connection_resource_id = each.value.resource_id
     subresource_names              = [each.value.subresource]
-    is_manual_connection           = false
+    request_message                = each.value.request_message
+    is_manual_connection           = !each.value.auto_approve
   }
 
   private_dns_zone_group {
