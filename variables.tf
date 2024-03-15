@@ -1,7 +1,7 @@
 variable "endpoints" {
   description = <<-EOT
   A map of objects used to configure one or more private endpoints for one or more resources, in the format:
-  ```hcl
+  ```
   {
     stexample = {
       resource_id  = "/subscriptions/storageAccounts/stexample"
