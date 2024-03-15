@@ -34,8 +34,8 @@ run "create_private_endpoints" {
   variables {
     resource_group_name = run.create_virtual_network.resource_group_name
     subnet_id           = run.create_virtual_network.subnet_id
-    endpoints = [
-      {
+    endpoints = {
+      storage_account_one = {
         resource_id = run.create_storage_account_one.storage_account_id
         subresource = {
           blob = {
@@ -54,7 +54,7 @@ run "create_private_endpoints" {
           }
         }
       },
-      {
+      storage_account_two = {
         resource_id  = run.create_storage_account_two.storage_account_id
         auto_approve = true
         subresource = {
@@ -65,7 +65,7 @@ run "create_private_endpoints" {
           }
         }
       }
-    ]
+    }
   }
 }
 
