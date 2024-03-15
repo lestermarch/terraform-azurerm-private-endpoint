@@ -28,8 +28,8 @@ output "endpoints" {
       zone.name => {
         for record in zone.record_sets :
         record.name => {
-          fqdn         = record.fqdn
-          ip_addresses = record.ip_addresses
+          fqdn       = record.fqdn
+          ip_address = one(record.ip_addresses)
         }
       }
     }
