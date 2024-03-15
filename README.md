@@ -14,8 +14,8 @@ module {
   location            = "uksouth"
   resource_group_name = "rg-example"
   subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
-  endpoints = [
-    {
+  endpoints = {
+    stexample = {
       resource_id = "/subscriptions/.../storageAccounts/stexample"
       subresource = {
         blob = {
@@ -25,7 +25,7 @@ module {
         }
       }
     }
-  ]
+  }
 }
 ```
 
@@ -39,8 +39,8 @@ module {
   location            = "uksouth"
   resource_group_name = "rg-example"
   subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
-  endpoints = [
-    {
+  endpoints = {
+    stexample = {
       resource_id  = "/subscriptions/.../storageAccounts/stexample"
       auto-approve = true
       subresource = {
@@ -53,7 +53,7 @@ module {
         }
       }
     }
-  ]
+  }
 }
 ```
 
@@ -67,9 +67,9 @@ module {
   location            = "uksouth"
   resource_group_name = "rg-example"
   subnet_id           = "/subscriptions/.../subnets/PrivateEndpointSubnet"
-  endpoints = [
-    {
-      # Storage account with blob and file private endpoints
+  endpoints = {
+    # Storage account "stexample" with blob and file private endpoints
+    stexample = {
       resource_id = "/subscriptions/.../storageAccounts/stexample"
       subresource = {
         blob = {
@@ -84,8 +84,8 @@ module {
         }
       }
     },
-    {
-      # Key vault with vault private endpoint
+    # Key vault "kv-example" with vault private endpoint
+    kv-example = {
       resource_id = "/subscriptions/.../storageAccounts/kv-example"
       subresource = {
         vault = {
@@ -95,14 +95,16 @@ module {
         }
       }
     }
-  ]
+  }
 }
 ```
 
 4. Private endpoint configuration from YAML (or JSON):
 
 ```yaml
-- resource_id: "/subscriptions/.../storageAccounts/stexample"
+# Storage account "stexample" with blob and file private endpoints
+stexample:
+  resource_id: "/subscriptions/.../storageAccounts/stexample"
   subresource:
     blob:
       private_dns_zone_ids:
@@ -111,7 +113,9 @@ module {
       private_dns_zone_ids:
         - "/subscriptions/.../privateDnsZones/privatelink.file.core.windows.net"
 
-- resource_id: "/subscriptions/.../storageAccounts/kv-example"
+# Key vault "kv-example" with vault private endpoint
+kv-example:
+  resource_id: "/subscriptions/.../storageAccounts/kv-example"
   subresource:
     vault:
       private_dns_zone_ids:
