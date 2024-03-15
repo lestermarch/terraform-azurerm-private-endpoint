@@ -1,7 +1,7 @@
 locals {
   # Flattened list of private endpoint configurations
   endpoints = flatten([
-    for resource in var.endpoints : [
+    for resource_key, resource in var.endpoints : [
       for subresource, endpoint in resource.subresource : {
         auto_approve = coalesce(resource.auto_approve, false)
         endpoint_name = coalesce(
@@ -36,8 +36,9 @@ locals {
             ]
           )
         )
-        resource_id = resource.resource_id
-        subresource = subresource
+        resource_id  = resource.resource_id
+        resource_key = resource_key
+        subresource  = subresource
       }
     ]
   ])
@@ -45,7 +46,7 @@ locals {
   # Map of private endpoint names to their configuration
   endpoints_iterable = {
     for endpoint in local.endpoints :
-    endpoint.endpoint_name => endpoint
+    "${endpoint.resource_key}-${endpoint.subresource}" => endpoint
   }
 
   # Map of private endpoint network interface names to IDs
