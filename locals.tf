@@ -46,7 +46,7 @@ locals {
   # Map of private endpoint names to their configuration
   endpoints_iterable = {
     for endpoint in local.endpoints :
-    "${endpoint.resource_key}-${endpoint.subresource}" => endpoint
+    "${endpoint.resource_key}_${endpoint.subresource}" => endpoint
   }
 
   # Map of private endpoint network interface names to IDs
