@@ -3,7 +3,7 @@ output "endpoints" {
   A map of private endpoints to private dns zone records, in the format:
   ```
   {
-    pe-stexample-blob = {
+    stexample_blob = {
       privatelink.blob.core.windows.net = {
         stexample = {
           blob = {
@@ -12,7 +12,7 @@ output "endpoints" {
           }
         }
       }
-    pe-stexample-dfs = {
+    stexample_dfs = {
       privatelink.dfs.core.windows.net = {
         stexample = {
           dfs = {
